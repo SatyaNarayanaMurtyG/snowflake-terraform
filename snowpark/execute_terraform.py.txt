@@ -1,0 +1,24 @@
+import subprocess
+import os
+
+def run_terraform():
+    try:
+        # Set working directory
+        tf_dir = os.path.join(os.getcwd(), "terraform")
+
+        # Terraform init
+        subprocess.run(["terraform", "init"], cwd=tf_dir, check=True)
+
+        # Terraform apply (auto approve)
+        subprocess.run(
+            ["terraform", "apply", "-auto-approve"],
+            cwd=tf_dir,
+            check=True
+        )
+
+        print("✅ Terraform execution successful")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error executing Terraform: {e}")
+
+if __name__ == "__main__":
+    run_terraform()

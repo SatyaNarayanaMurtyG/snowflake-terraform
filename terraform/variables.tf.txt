@@ -1,0 +1,9 @@
+variable "account" {}
+variable "username" {}
+variable "password" {
+  sensitive = true
+}
+variable "role" {
+  default = "SYSADMIN"
+}
+variable "region" {}

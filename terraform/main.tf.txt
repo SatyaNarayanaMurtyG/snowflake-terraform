@@ -1,0 +1,8 @@
+# Example warehouse
+resource "snowflake_warehouse" "this" {
+  name            = "WH_EXAMPLE"
+  warehouse_size  = "SMALL"
+  auto_suspend    = 3
+  auto_resume     = true
+  initially_suspended = true
+}
