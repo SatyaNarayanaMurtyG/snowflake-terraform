@@ -1,44 +1,31 @@
-name Terraform CICD
-
-on
-  push
-    branches
+---
+name: Terraform CI/CD
+on:
+  push:
+    branches:
       - main
-  pull_request
-
-jobs
-  terraform
-    runs-on ubuntu-latest
-
-    steps
-      # Checkout repo
-      - name Checkout code
-        uses actionscheckout@v3
-
-      # Setup Terraform
-      - name Setup Terraform
-        uses hashicorpsetup-terraform@v2
-        with
-          terraform_version 1.6.2
-
-      # Initialize Terraform
-      - name Terraform Init
-        run terraform -chdir=terraform init
-
-      # Terraform validate
-      - name Terraform Validate
-        run terraform -chdir=terraform validate
-
-      # Terraform Plan
-      - name Terraform Plan
-        run terraform -chdir=terraform plan -input=false
-
-      # Terraform Apply (controlled by env var)
-      - name Terraform Apply
-        if github.ref == 'refsheadsmain' && github.event_name == 'push'
-        run terraform -chdir=terraform apply -auto-approve -input=false
-        env
-          TF_VAR_account ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          TF_VAR_username ${{ secrets.SNOWFLAKE_USER }}
-          TF_VAR_password ${{ secrets.SNOWFLAKE_PASSWORD }}
-          TF_VAR_region ${{ secrets.SNOWFLAKE_REGION }}
+  pull_request: null
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.2
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+      - name: Terraform Validate
+        run: terraform -chdir=terraform validate
+      - name: Terraform Plan
+        run: terraform -chdir=terraform plan -input=false
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform -chdir=terraform apply -auto-approve -input=false
+        env:
+          TF_VAR_account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          TF_VAR_username: ${{ secrets.SNOWFLAKE_USER }}
+          TF_VAR_password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          TF_VAR_region: ${{ secrets.SNOWFLAKE_REGION }}
